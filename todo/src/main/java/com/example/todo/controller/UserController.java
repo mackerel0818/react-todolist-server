@@ -115,7 +115,7 @@ public class UserController {
 		}
 	}
 	
-	@DeleteMapping("/{userId}")
+	@DeleteMapping("/delete/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable String userId) {
         try {
             // 유저 삭제 로직을 수행
