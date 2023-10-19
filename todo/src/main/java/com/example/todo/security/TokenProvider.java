@@ -17,7 +17,7 @@ public class TokenProvider {
 	private static final String SECRET_KEY = "NMA8JPctFuna59f5";
 
 	public String create(UserEntity userEntity) {
-		Date expireDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
+		Date expireDate = Date.from(Instant.now().plus(30, ChronoUnit.DAYS));
 
 		return Jwts.builder()
 
