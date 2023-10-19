@@ -1,0 +1,1 @@
+INSERT INTO CATEGORY (ID, NAME) VALUES('all','All');
