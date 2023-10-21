@@ -32,4 +32,21 @@ public class UserService {
 		userRepository.deleteById(userId);
 		
 	}
+
+	public UserEntity getUserInfo(String userId) {
+        if (userId == null) {
+            throw new RuntimeException("Invalid user ID");
+        }
+
+        return userRepository.findById(userId)
+                .orElse(null); // 사용자를 찾지 못하면 null 반환
+    }
+
+    public void updateUser(UserEntity userEntity) {
+        if (userEntity == null) {
+            throw new RuntimeException("Invalid user information");
+        }
+
+        userRepository.save(userEntity); // 사용자 정보 업데이트
+    }
 }

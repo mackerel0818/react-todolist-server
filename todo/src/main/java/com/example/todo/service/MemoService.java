@@ -26,40 +26,40 @@ public class MemoService {
     }
 
     public List<MemoEntity> retrieveMemosByCategory(String userId, String categoryId) {
-        return memoRepository.findByUserIdAndCategory_Id(userId, categoryId);
+        return memoRepository.findByUserIdAndCategoryId(userId, categoryId);
     }
 
+    public MemoEntity retrieveMemoById(String userId, String memoId) {
+        MemoEntity entity = memoRepository.findById(memoId).orElse(null);
+        if (entity != null && entity.getUserId().equals(userId)) {
+            return entity;
+        } else {
+            throw new RuntimeException("Memo not found or access denied.");
+        }
+    }
 
     public List<MemoEntity> updateMemo(MemoEntity entity, String userId) {
         entity.setUserId(userId);
         validate(entity);
-        if (memoRepository.existsById(entity.getId())) {
-            MemoEntity existingMemo = memoRepository.findById(entity.getId()).orElse(null);
-            if (existingMemo != null) {
-                existingMemo.setTitle(entity.getTitle());
-                existingMemo.setContent(entity.getContent());
+        MemoEntity existingMemo = retrieveMemoById(userId, entity.getId());
+        
+        existingMemo.setTitle(entity.getTitle());
+        existingMemo.setContent(entity.getContent());
 
-                // 새로운 카테고리 엔티티 생성
-                CategoryEntity newCategory = new CategoryEntity();
-                newCategory.setId(entity.getCategoryId());
+        // 새로운 카테고리 엔티티 생성
+        CategoryEntity newCategory = new CategoryEntity();
+        newCategory.setId(entity.getCategoryId());
 
-                existingMemo.setCategory(newCategory); // 카테고리 변경
-                memoRepository.save(existingMemo);
-            }
-        } else {
-            throw new RuntimeException("Unknown id");
-        }
+        existingMemo.setCategory(newCategory); // 카테고리 변경
+        memoRepository.save(existingMemo);
+
         return memoRepository.findByUserId(userId);
     }
 
+    public List<MemoEntity> deleteMemo(String userId, MemoEntity entity) {
+        MemoEntity existingMemo = retrieveMemoById(userId, entity.getId());
+        memoRepository.deleteById(existingMemo.getId());
 
-    public List<MemoEntity> deleteMemo(MemoEntity entity, String userId) {
-        entity.setUserId(userId);
-        if (memoRepository.existsById(entity.getId())) {
-            memoRepository.deleteById(entity.getId());
-        } else {
-            throw new RuntimeException("id does not exist");
-        }
         return memoRepository.findByUserId(userId);
     }
 
@@ -71,6 +71,4 @@ public class MemoService {
             throw new RuntimeException("Unknown user.");
         }
     }
-
-    
 }

@@ -1,8 +1,12 @@
+package com.example.todo.service;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.todo.dto.CategoryDTO;
 import com.example.todo.model.CategoryEntity;
 import com.example.todo.persistence.CategoryRepository;
 

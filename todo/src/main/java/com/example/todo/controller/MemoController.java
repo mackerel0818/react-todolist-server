@@ -71,24 +71,24 @@ public class MemoController {
         }
     }
     
-    @PutMapping("/all")
-    public ResponseEntity<?> updateMemoDefaultCategory(@AuthenticationPrincipal String userId, @RequestBody MemoEntity entity) {
-        try {
-            List<MemoEntity> entities = memoService.updateMemoDefaultCategory(entity, userId);
-            List<MemoDTO> dtos = entities.stream().map(MemoDTO::new).collect(Collectors.toList());
-            ResponseDTO<MemoDTO> response = ResponseDTO.<MemoDTO>builder().data(dtos).build();
-            return ResponseEntity.ok().body(response);
-        } catch (Exception e) {
-            String error = e.getMessage();
-            ResponseDTO<MemoDTO> response = ResponseDTO.<MemoDTO>builder().error(error).build();
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
+//    @PutMapping("/all")
+//    public ResponseEntity<?> updateMemoDefaultCategory(@AuthenticationPrincipal String userId, @RequestBody MemoEntity entity) {
+//        try {
+//            List<MemoEntity> entities = memoService.updateMemoDefaultCategory(entity, userId);
+//            List<MemoDTO> dtos = entities.stream().map(MemoDTO::new).collect(Collectors.toList());
+//            ResponseDTO<MemoDTO> response = ResponseDTO.<MemoDTO>builder().data(dtos).build();
+//            return ResponseEntity.ok().body(response);
+//        } catch (Exception e) {
+//            String error = e.getMessage();
+//            ResponseDTO<MemoDTO> response = ResponseDTO.<MemoDTO>builder().error(error).build();
+//            return ResponseEntity.badRequest().body(response);
+//        }
+//    }
 
     @DeleteMapping
     public ResponseEntity<?> deleteMemo(@AuthenticationPrincipal String userId, @RequestBody MemoEntity entity) {
         try {
-            List<MemoEntity> entities = memoService.deleteMemo(entity, userId);
+            List<MemoEntity> entities = memoService.deleteMemo(userId, entity);
             List<MemoDTO> dtos = entities.stream().map(MemoDTO::new).collect(Collectors.toList());
             ResponseDTO<MemoDTO> response = ResponseDTO.<MemoDTO>builder().data(dtos).build();
             return ResponseEntity.ok().body(response);

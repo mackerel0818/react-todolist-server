@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
@@ -24,9 +27,14 @@ public class MemoEntity {
     private String id;
 
     private String title;
+    
+    @Lob
     private String content;
     
     private String userId;
+    
+    @Column(name = "category_id", insertable = false, updatable = false)
+    private String categoryId;
     
     @ManyToOne
     private CategoryEntity category;

@@ -40,6 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
 				.antMatchers("/", "/auth/**", "/h2-console/**").permitAll().anyRequest().authenticated();
 
+		http.headers().frameOptions().disable();
 		http.exceptionHandling().authenticationEntryPoint((request, response, e) -> {
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put("status", HttpServletResponse.SC_FORBIDDEN);

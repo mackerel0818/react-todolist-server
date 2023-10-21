@@ -1,53 +1,70 @@
 package com.example.todo.controller;
 
 import com.example.todo.dto.CategoryDTO;
+import com.example.todo.dto.ResponseDTO;
+import com.example.todo.model.CategoryEntity;
 import com.example.todo.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("categories")
 public class CategoryController {
-
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
-        List<CategoryDTO> categories = categoryService.getAllCategories();
-        return ResponseEntity.ok(categories);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable String id) {
-        CategoryDTO category = categoryService.getCategoryById(id);
-        if (category != null) {
-            return ResponseEntity.ok(category);
-        }
-        return ResponseEntity.notFound().build();
-    }
-
     @PostMapping
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
-        CategoryDTO createdCategory = categoryService.createCategory(categoryDTO);
-        return ResponseEntity.ok(createdCategory);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable String id, @RequestBody CategoryDTO categoryDTO) {
-        CategoryDTO updatedCategory = categoryService.updateCategory(id, categoryDTO);
-        if (updatedCategory != null) {
-            return ResponseEntity.ok(updatedCategory);
+    public ResponseEntity<?> createCategory(@AuthenticationPrincipal String userId, @RequestBody CategoryEntity entity) {
+        try {
+            List<CategoryEntity> entities = categoryService.createCategory(entity, userId);
+            List<CategoryDTO> dtos = entities.stream().map(CategoryDTO::new).collect(Collectors.toList());
+            ResponseDTO<CategoryDTO> response = ResponseDTO.<CategoryDTO>builder().data(dtos).build();
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            String error = e.getMessage();
+            ResponseDTO<CategoryDTO> response = ResponseDTO.<CategoryDTO>builder().error(error).build();
+            return ResponseEntity.badRequest().body(response);
         }
-        return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable String id) {
-        categoryService.deleteCategory(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping
+    public ResponseEntity<?> retrieveCategories(@AuthenticationPrincipal String userId) {
+        List<CategoryEntity> entities = categoryService.retrieveCategories(userId);
+        List<CategoryDTO> dtos = entities.stream().map(CategoryDTO::new).collect(Collectors.toList());
+        ResponseDTO<CategoryDTO> response = ResponseDTO.<CategoryDTO>builder().data(dtos).build();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateCategory(@AuthenticationPrincipal String userId, @RequestBody CategoryEntity entity) {
+        try {
+            List<CategoryEntity> entities = categoryService.updateCategory(entity, userId);
+            List<CategoryDTO> dtos = entities.stream().map(CategoryDTO::new).collect(Collectors.toList());
+            ResponseDTO<CategoryDTO> response = ResponseDTO.<CategoryDTO>builder().data(dtos).build();
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            String error = e.getMessage();
+            ResponseDTO<CategoryDTO> response = ResponseDTO.<CategoryDTO>builder().error(error).build();
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteCategory(@AuthenticationPrincipal String userId, @RequestBody CategoryEntity entity) {
+        try {
+            List<CategoryEntity> entities = categoryService.deleteCategory(entity, userId);
+            List<CategoryDTO> dtos = entities.stream().map(CategoryDTO::new).collect(Collectors.toList());
+            ResponseDTO<CategoryDTO> response = ResponseDTO.<CategoryDTO>builder().data(dtos).build();
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            String error = e.getMessage();
+            ResponseDTO<CategoryDTO> response = ResponseDTO.<CategoryDTO>builder().error(error).build();
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }
